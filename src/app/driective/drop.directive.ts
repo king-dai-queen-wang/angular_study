@@ -15,8 +15,6 @@ export class DropDirective {
   @HostListener('drop', ['$event'])
   onDrop(event) {
     event.preventDefault();
-    const data = event.dataTransfer.getData('text/plain');
-
     this.hwDragOver.emit(event);
     this.hwDrop.emit(event);
     event.dataTransfer.clearData();

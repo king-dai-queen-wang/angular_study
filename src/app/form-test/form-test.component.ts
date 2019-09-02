@@ -22,7 +22,7 @@ class CurContact{
 
 export class FormTestComponent implements OnInit {
 
-	public customForm:FormGroup
+	public customForm:FormGroup;
 	// console.log(curContact)
 	stock:number;
   priceQuote:PriceQuote;

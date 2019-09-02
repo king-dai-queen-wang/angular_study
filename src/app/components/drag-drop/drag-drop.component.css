@@ -8,9 +8,14 @@
   display: inline-block;
 }
 .container{
-  width: 180px;
+  width: 156px;
+  position: relative;
 }
 :host{
   display: block;
 
+}
+
+.dragging{
+  opacity: 0.1
 }

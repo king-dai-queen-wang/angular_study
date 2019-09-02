@@ -1,14 +1,15 @@
 import {Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {isNullOrUndefined} from "util";
 
 @Directive({
   selector: '[appDrag]'
 })
 export class DragDirective {
 
-  @Input() appDrag = '';
-  @Output() hwDragStart: EventEmitter<any> = new EventEmitter<any>();
-  @Output() hwDragEnd: EventEmitter<any> = new EventEmitter<any>();
-  @Output() hwDrag: EventEmitter<any> = new EventEmitter<any>();
+  @Input() appDragData = '';
+  @Output() hwDragStart: EventEmitter<Event> = new EventEmitter<Event>();
+  @Output() hwDragEnd: EventEmitter<Event> = new EventEmitter<Event>();
+  @Output() hwDrag: EventEmitter<Event> = new EventEmitter<Event>();
 
   protected el: ElementRef;
 
@@ -19,8 +20,8 @@ export class DragDirective {
   @HostListener('dragstart', ['$event'])
   onDragStart(event) {
     // event.preventDefault();
-    if (this.appDrag) {
-      event.dataTransfer.setData('text/plain', this.appDrag);
+    if (!isNullOrUndefined(this.appDragData)) {
+      event.dataTransfer.setData('text/plain', this.appDragData);
     }
 
     this.hwDragStart.emit(event);
@@ -29,6 +30,7 @@ export class DragDirective {
   @HostListener('dragend', ['$event'])
   onDragEnd(event) {
     event.preventDefault();
+    this.hwDragEnd.emit(event);
     event.dataTransfer.clearData();
   }
 
