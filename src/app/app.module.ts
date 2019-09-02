@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms'; // <-- NgModel lives here
+import { FormsModule,ReactiveFormsModule } from '@angular/forms'; // <-- NgModel lives here
 
 import { AppComponent } from './app.component';
 import { HeroesComponent } from './heroes/heroes.component';
@@ -13,6 +13,11 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService }  from './in-memory-data.service';
 import { HeroSearchComponent } from './hero-search/hero-search.component';
 import { HttpClientModule }    from '@angular/common/http';
+import { FormTestComponent } from './form-test/form-test.component';
+import { OderComponentComponent } from './oder-component/oder-component.component';
+import { PriceqQuoteComponent } from './priceq-quote/priceq-quote.component';
+import { LifeCycleComponent } from './life-cycle/life-cycle.component';
+import { LifeCycleChildComponent } from './life-cycle-child/life-cycle-child.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +26,12 @@ import { HttpClientModule }    from '@angular/common/http';
     HeroDetailComponent,
     MessagesComponent,
     DashboardComponent,
-    HeroSearchComponent
+    HeroSearchComponent,
+    FormTestComponent,
+    OderComponentComponent,
+    PriceqQuoteComponent,
+    LifeCycleComponent,
+    LifeCycleChildComponent
   ],
   imports: [
   	HttpClientModule,
@@ -34,6 +44,7 @@ import { HttpClientModule }    from '@angular/common/http';
 	),
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule
   ],
   providers: [],
