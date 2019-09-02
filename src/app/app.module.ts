@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { HeroesComponent } from './heroes/heroes.component';
 import { HeroDetailComponent } from './hero-detail/hero-detail.component';
 import { MessagesComponent } from './messages/messages.component';
-import { AppRoutingModule } from './/app-routing.module';
+import { AppRoutingModule } from './app-routing.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
 
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -18,6 +18,9 @@ import { OderComponentComponent } from './oder-component/oder-component.componen
 import { PriceqQuoteComponent } from './priceq-quote/priceq-quote.component';
 import { LifeCycleComponent } from './life-cycle/life-cycle.component';
 import { LifeCycleChildComponent } from './life-cycle-child/life-cycle-child.component';
+import { DragDirective } from './driective/drag.directive';
+import { DropDirective } from './driective/drop.directive';
+import {DragDropComponent} from "./components/drag-drop/drag-drop.component";
 
 @NgModule({
   declarations: [
@@ -31,7 +34,10 @@ import { LifeCycleChildComponent } from './life-cycle-child/life-cycle-child.com
     OderComponentComponent,
     PriceqQuoteComponent,
     LifeCycleComponent,
-    LifeCycleChildComponent
+    LifeCycleChildComponent,
+    DragDropComponent,
+    DragDirective,
+    DropDirective
   ],
   imports: [
   	HttpClientModule,

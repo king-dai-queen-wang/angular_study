@@ -1,0 +1,16 @@
+.item {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  border: 1px solid red;
+  user-select: none;
+  display: inline-block;
+}
+.container{
+  width: 180px;
+}
+:host{
+  display: block;
+
+}

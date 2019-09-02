@@ -1,0 +1,11 @@
+<div class="container">
+  <div *ngFor="let item of option; index as i"
+       class="item"
+       draggable="true"
+       [appDrag]="i" appDrop
+       (hwDrag)="onDrag($event)"
+       (hwDrop)="onDrop($event)"
+  >
+    {{i}}
+  </div>
+</div>
