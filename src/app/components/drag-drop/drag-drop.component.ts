@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-drag-drop',
@@ -10,6 +10,7 @@ export class DragDropComponent implements OnInit {
   private fromXY = [];
   private toXY = [];
   private transformXY = [];
+  private dragSource: ElementRef;
   constructor() { }
 
   ngOnInit() {
@@ -39,7 +40,7 @@ export class DragDropComponent implements OnInit {
   }
 
   onDragEnter(event: Event) {
-
+    this.changePosition(event, this.fromXY);
     this.addDragClass(event);
     console.log('onDragEnter', event);
     // this.toXY = x_y;
@@ -67,11 +68,18 @@ export class DragDropComponent implements OnInit {
     }
     const fromData = event.dataTransfer.getData('text/plain');
     this.toXY = x_y;
-    this.changePosition(fromData, targetData);
+    this.ajax(fromData, targetData);
   }
 
-  changePosition(fromData: any, targetData: any) {
-    console.log(fromData, targetData)
+  ajax(fromData: any, targetData: any) {
+    console.log(fromData, targetData);
+  }
+
+  changePosition(event: Event, toPosition) {
+
+    let value = `translate(${ Math.round(toPosition[0]) }px, ${ Math.round(toPosition[1]) }px)`;
+
+    console.log(value);
   }
 
 }

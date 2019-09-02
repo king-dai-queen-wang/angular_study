@@ -6,6 +6,7 @@
   border: 1px solid red;
   user-select: none;
   display: inline-block;
+  transition: all 0.3s ease-in-out;
 }
 .container{
   width: 156px;
