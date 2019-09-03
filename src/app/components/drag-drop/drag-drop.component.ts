@@ -1,4 +1,7 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChildren} from '@angular/core';
+import {DragDirective} from "../../driective/drag.directive";
+import {isNullOrUndefined} from "util";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-drag-drop',
@@ -6,14 +9,20 @@ import {Component, ElementRef, OnInit} from '@angular/core';
   styleUrls: ['./drag-drop.component.css']
 })
 export class DragDropComponent implements OnInit {
-  public option = [0,1,2,3,4,5,6,7,8];
-  private fromXY = [];
-  private toXY = [];
-  private transformXY = [];
-  private dragSource: ElementRef;
-  constructor() { }
+  @ViewChildren(DragDirective) dragItems: QueryList<DragDirective>;
+  public option$: BehaviorSubject<number[]> = new BehaviorSubject([0,1,2,3,4,5,6,7,8]);
+  private dragSource: any;
+  private dragTarget: any;
+  private isDragging = false;
+
+  lastTransformedBlock = null;
+  constructor(private render2:Renderer2, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
+  }
+
+  isMyself(target: any) {
+    return this.dragSource.toString() === target.toString();
   }
 
   addDragClass(event: Event) {
@@ -25,9 +34,9 @@ export class DragDropComponent implements OnInit {
   }
 
   onDragStart(event: Event) {
+    this.dragSource = event.dataTransfer.getData('text/plain');
     console.log('dragStart', event);
     this.addDragClass(event);
-    this.fromXY = [(event.target as HTMLElement).offsetLeft, (event.target as HTMLElement).offsetTop ];
   }
 
   onDrag(event: Event) {
@@ -35,51 +44,94 @@ export class DragDropComponent implements OnInit {
   }
 
   onDragEnd(event: Event) {
-    console.log('dragEnd', event);
+    // console.log('dragEnd', event);
     this.removeDragClass(event);
+    this.isDragging = false;
   }
 
-  onDragEnter(event: Event) {
-    this.changePosition(event, this.fromXY);
+  onDragEnter(event: Event, target: any) {
+    if (this.isMyself(target) || this.lastTransformedBlock === target) {
+      return;
+    }
+
+    // reset last
+    if(!isNullOrUndefined(this.lastTransformedBlock)) this.resetDragTargetPosition(this.lastTransformedBlock);
+
+    this.lastTransformedBlock = target;
+
     this.addDragClass(event);
-    console.log('onDragEnter', event);
-    // this.toXY = x_y;
+    console.log('onDragEnter', event, target);
+    this.dragTarget = target;
+    this.changePosition();
   }
 
   onDragOver(event: Event) {
     // console.log('onDragOver', event)
   }
 
-  onDragLeave(event: Event) {
-    const x_y = [(event.target as HTMLElement).offsetLeft, (event.target as HTMLElement).offsetTop ];
-    if (this.fromXY[0] === x_y[0] && this.fromXY[1] === x_y[1]) {
+  onDragLeave(event: Event, target: any) {
+    if (this.isMyself(target)) {
       return;
     }
     this.removeDragClass(event);
-    console.log('onDragLeave', event)
+    // this.dragTarget = target;
+    // console.log('onDragLeave', event);
+    // this.resetPosition();
   }
 
-  onDrop(event: Event, targetData: any) {
+  onDrop(event: Event, target) {
     this.removeDragClass(event);
     console.log('drop', event);
-    const x_y = [(event.target as HTMLElement).offsetLeft, (event.target as HTMLElement).offsetTop ];
-    if (this.fromXY[0] === x_y[0] && this.fromXY[1] === x_y[1]) {
+    const fromData = event.dataTransfer.getData('text/plain');
+    this.ajax(fromData, this.dragTarget);
+    this.resetPosition();
+  }
+
+  ajax(fromData: any, targetData: any): void {
+    console.log(fromData, targetData);
+    if (fromData === targetData) {
       return;
     }
-    const fromData = event.dataTransfer.getData('text/plain');
-    this.toXY = x_y;
-    this.ajax(fromData, targetData);
+    const option = this.option$.getValue();
+    option.splice(targetData,1,...option.splice(fromData, 1 , option[targetData]));
+    console.log(option);
+    this.option$.next(option);
+    this.cdr.markForCheck();
+    this.dragTarget = null;
+    this.dragSource = null;
   }
 
-  ajax(fromData: any, targetData: any) {
-    console.log(fromData, targetData);
+  changePosition() {
+    // console.log('changePosition');
+    const sourceEl: ElementRef = this.dragItems.find(i => i.appDragData.toString() === this.dragSource.toString()).el;
+    const sourcePosition = [(sourceEl.nativeElement as HTMLElement).offsetLeft, (sourceEl.nativeElement as HTMLElement).offsetTop];
+    const targetEl: ElementRef = this.dragItems.find(i => i.appDragData.toString() === this.dragTarget.toString()).el;
+    const targetPosition = [(targetEl.nativeElement as HTMLElement).offsetLeft, (targetEl.nativeElement as HTMLElement).offsetTop];
+    let toSourceValue = `translate(${ Math.round(sourcePosition[0] - targetPosition[0]) }px, ${ Math.round(sourcePosition[1] - targetPosition[1]) }px)`;
+    let toTargetValue = `translate(${ Math.round(targetPosition[0] - sourcePosition[0]) }px, ${ Math.round(targetPosition[1] - sourcePosition[1]) }px)`;
+    this.render2.setStyle(sourceEl.nativeElement,'transform', toTargetValue);
+    this.render2.setStyle(sourceEl.nativeElement,'z-index', 999);
+    this.render2.setStyle(targetEl.nativeElement,'transform', toSourceValue);
+    // console.log( sourcePosition, targetPosition);
   }
 
-  changePosition(event: Event, toPosition) {
+  resetPosition() {
+    console.log('reset');
+    const sourceEl: ElementRef = this.dragItems.forEach(item => {
+      this.render2.setStyle(item.el.nativeElement,'transform', `translate(0)`);
+    });
 
-    let value = `translate(${ Math.round(toPosition[0]) }px, ${ Math.round(toPosition[1]) }px)`;
+  }
 
-    console.log(value);
+  resetDragTargetPosition(target) {
+    console.log('resetDragTargetPosition', target);
+    const targetEl: ElementRef = this.dragItems.find(i => i.appDragData.toString() === target.toString()).el;
+    const targetPosition = [0, 0];
+
+    let toTargetValue = `translate(0)`;
+
+    this.render2.setStyle(targetEl.nativeElement,'transform', toTargetValue);
+    this.render2.removeClass(targetEl.nativeElement,'dragging');
   }
 
 }
