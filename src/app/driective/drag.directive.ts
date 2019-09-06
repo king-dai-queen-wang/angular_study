@@ -10,6 +10,7 @@ export class DragDirective {
   @Output() hwDragStart: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() hwDragEnd: EventEmitter<Event> = new EventEmitter<Event>();
   @Output() hwDrag: EventEmitter<Event> = new EventEmitter<Event>();
+  @Output() hwMouseUp: EventEmitter<Event> = new EventEmitter<Event>();
 
   protected el: ElementRef;
 
@@ -38,6 +39,12 @@ export class DragDirective {
   onDrag(event) {
     event.preventDefault();
     this.hwDrag.emit(event);
+  }
+
+  @HostListener('mouseup', ['$event'])
+  onMouseup(event) {
+    event.preventDefault();
+    this.hwMouseUp.emit(event);
   }
 
 }

@@ -5,12 +5,13 @@
        [appDragData]="i"
        (hwDragStart)="onDragStart($event)"
        (hwDrag)="onDrag($event)"
+       (hwMouseUp)="onMouseUp($event)"
        (hwDragEnd)="onDragEnd($event)"
        (hwDragEnter)="onDragEnter($event, i)"
        (hwDragOver)="onDragOver($event)"
        (hwDragLeave)="onDragLeave($event, i)"
        (hwDrop)="onDrop($event, i)"
   >
-    {{i}}
+    {{item}}-{{i}}
   </div>
 </div>
